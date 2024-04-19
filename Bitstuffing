@@ -1,0 +1,32 @@
+#include<stdio.h>
+#include<string.h>
+int main()
+{
+    char s[100],stuffed[150];
+    int i,j=0,count=0,n,bv;
+    printf("enter data:\n");
+    scanf("%s",s);
+    printf("enter bit value to stuff:\n");
+    scanf("%d",&bv);
+    for(i=0;i<n;i++)
+    {
+        if(s[i]=='1')
+    {
+        stuffed[j++]=s[i];
+        count++;
+    }
+    else
+    {
+        stuffed[j++]=s[i];
+        count=0;
+    }
+    if(count==bv)
+    {
+        stuffed[j++]='0';
+        count=0;
+    }
+    }
+    stuffed[j]='\0';
+    printf("data after stuffing:%s\n",stuffed);
+    return 0;
+}
