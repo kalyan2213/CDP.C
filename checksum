@@ -1,0 +1,60 @@
+#include <stdio.h>
+// Function to calculate UDP checksum
+unsigned short calculateChecksum(unsigned short *buf, int nwords) {
+    unsigned long sum;
+    for (sum = 0; nwords > 0; nwords--)
+        sum += *buf++;
+    sum = (sum >> 16) + (sum & 0xffff);
+    sum += (sum >> 16);
+    return (unsigned short)(~sum);
+}
+
+// Function to convert checksum to bit format
+void checksumToBits(unsigned short checksum) {
+    for (int i = 15; i >= 0; i--) {
+        printf("%d", (checksum >> i) & 1);
+        if (i % 4 == 0)
+            printf(" ");
+    }
+    printf("\n");
+}
+
+int main() {
+    int numItems;
+    printf("Enter number of data items (Each contains 16 bits): ");
+    scanf("%d", &numItems);
+
+    unsigned short data[numItems];
+    printf("Enter data: \n");
+    for (int i = 0; i < numItems; i++) {
+        printf("Data item %d: ", i + 1);
+        scanf("%hu", &data[i]);
+    }
+
+    // Calculate checksum
+    unsigned short checksum = calculateChecksum(data, numItems);
+
+    printf("Now at sender UDP checksum is (in bits): ");
+    checksumToBits(checksum);
+
+    printf("Enter data received by receiver: \n");
+    unsigned short receivedData[numItems];
+    for (int i = 0; i < numItems; i++) {
+        printf("Data item %d: ", i + 1);
+        scanf("%hu", &receivedData[i]);
+    }
+
+    // Verify checksum
+    unsigned short receivedChecksum = calculateChecksum(receivedData, numItems);
+    if (receivedChecksum == 0) {
+        printf("Checksum verification failed: checksum is 0, indicating no error.\n");
+    } else {
+        if (receivedChecksum == checksum) {
+            printf("Checksum verification passed: checksums match.\n");
+        } else {
+            printf("Checksum verification failed: checksums don't match.\n");
+        }
+    }
+
+    return 0;
+}
